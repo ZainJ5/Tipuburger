@@ -23,7 +23,7 @@ export default function Home() {
   const isInitialLoad = useRef(true);
 
   const handleWhatsAppClick = () => {
-    window.open("https://wa.me/923122754064", "_blank");
+    window.open("https://wa.me/923463332682", "_blank");
   };
 
   const getId = (idField) => {
