@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useOrderTypeStore } from "../../store/orderTypeStore";
 import { useDeliveryAreaStore } from "../../store/deliveryAreaStore";
 import { useBranchStore } from "../../store/branchStore";
-import { Truck, ShoppingBag, MapPin } from "lucide-react";
+import { Truck, ShoppingBag, MapPin, ChevronDown } from "lucide-react";
 
 export default function DeliveryPickupModal() {
   const [isSiteActive, setIsSiteActive] = useState(true);
@@ -141,81 +141,55 @@ export default function DeliveryPickupModal() {
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white w-full max-w-sm rounded-xl shadow-2xl overflow-hidden animate-fadeIn">
+      <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-fadeIn">
         <div className="relative">
-          <div className="bg-red-600 h-16"></div>
-          <div className="absolute left-1/2 -translate-x-1/2 top-4 flex justify-center">
-            <div className="rounded-full bg-white p-1 border-2 border-gray-200 shadow-md">
+          <div className="bg-red-600 h-20"></div>
+          <div className="absolute left-1/2 -translate-x-1/2 top-6 flex justify-center">
+            <div className="rounded-full bg-white p-1.5 border-4 border-white shadow-lg">
               <img 
                 src={logoUrl} 
                 alt="Restaurant Logo" 
-                className="h-24 w-24 object-contain rounded-full"
+                className="h-20 w-20 object-contain rounded-full"
               />
             </div>
           </div>
         </div>
 
-        <div className="p-6 pt-16 space-y-6">
-          {/* Branch Selection */}
+        <div className="px-6 pt-14 pb-6 space-y-5">
+          {/* Order Type Selection - Compact Pills */}
           <div>
-            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-              <MapPin className="mr-2 text-red-600" size={20} />
-              Select Branch
-            </h3>
-            <select
-              value={branch?._id || ""}
-              onChange={handleBranchSelect}
-              className="w-full p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-black"
-            >
-              <option value="" disabled className="text-gray-500">
-                Please select a branch
-              </option>
-              {branches.map((b) => (
-                <option key={b._id} value={b._id} className="text-black">
-                  {b.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Order Type Selection */}
-          <div>
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Select Order Type</h3>
-            <div className={`grid ${settings.allowDelivery && settings.allowPickup ? 'grid-cols-2' : 'grid-cols-1'} gap-3`}>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 text-center">Select Order Type</h3>
+            <div className="flex gap-2 justify-center">
               {settings.allowDelivery && (
                 <button
                   onClick={() => handleOrderTypeSelect("delivery")}
                   disabled={!branch}
-                  className={`flex flex-col items-center justify-center p-4 border rounded-lg transition-all duration-200 ease-in-out h-24 ${
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200 ${
                     !branch
-                      ? "border-gray-200 bg-gray-100 cursor-not-allowed opacity-50"
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : orderType === "delivery"
-                      ? "border-red-500 bg-red-50"
-                      : "border-gray-300 bg-white hover:border-red-400"
+                      ? "bg-red-600 text-white shadow-md"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
-                  <Truck size={28} className={!branch ? "text-gray-400" : "text-red-600"} />
-                  <span className={`font-semibold text-sm mt-2 ${!branch ? "text-gray-400" : "text-gray-800"}`}>
-                    Delivery
-                  </span>
+                  <Truck size={16} />
+                  Delivery
                 </button>
               )}
               {settings.allowPickup && (
                 <button
                   onClick={() => handleOrderTypeSelect("pickup")}
                   disabled={!branch}
-                  className={`flex flex-col items-center justify-center p-4 border rounded-lg transition-all duration-200 ease-in-out h-24 ${
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200 ${
                     !branch
-                      ? "border-gray-200 bg-gray-100 cursor-not-allowed opacity-50"
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : orderType === "pickup"
-                      ? "border-red-500 bg-red-50"
-                      : "border-gray-300 bg-white hover:border-red-400"
+                      ? "bg-red-600 text-white shadow-md"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
-                  <ShoppingBag size={28} className={!branch ? "text-gray-400" : "text-red-600"} />
-                  <span className={`font-semibold text-sm mt-2 ${!branch ? "text-gray-400" : "text-gray-800"}`}>
-                    Pickup
-                  </span>
+                  <ShoppingBag size={16} />
+                  Pickup
                 </button>
               )}
             </div>
@@ -226,35 +200,65 @@ export default function DeliveryPickupModal() {
             )}
           </div>
 
-          {/* Delivery Area Selection */}
-          {orderType === 'delivery' && (
-            <div>
-              <h3 className="text-lg font-bold text-gray-800 mb-4">Select Delivery Area</h3>
+          {/* Branch Selection - Compact */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <MapPin className="inline mr-1.5" size={16} />
+              Branch Location
+            </label>
+            <div className="relative">
               <select
-                value={deliveryArea?._id || ""}
-                onChange={handleDeliveryAreaSelect}
-                className="w-full p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-black"
+                value={branch?._id || ""}
+                onChange={handleBranchSelect}
+                className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 text-sm text-gray-800 appearance-none cursor-pointer transition-all"
               >
                 <option value="" disabled className="text-gray-500">
-                  {branch ? 'Please select your delivery area' : 'Select a branch first'}
+                  Choose your branch
                 </option>
-                {deliveryAreas.length > 0 ? (
-                  deliveryAreas.map((area) => (
-                    <option 
-                      key={area._id} 
-                      value={area._id} 
-                      className="text-black"
-                    >
-                      {area.name} (Fee: Rs. {area.fee})
-                    </option>
-                  ))
-                ) : branch ? (
-                  <option disabled className="text-gray-500">No delivery areas available for this branch</option>
-                ) : null}
+                {branches.map((b) => (
+                  <option key={b._id} value={b._id} className="text-gray-800">
+                    {b.name}
+                  </option>
+                ))}
               </select>
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
+            </div>
+          </div>
+
+          {/* Delivery Area Selection - Compact */}
+          {orderType === 'delivery' && (
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Delivery Area
+              </label>
+              <div className="relative">
+                <select
+                  value={deliveryArea?._id || ""}
+                  onChange={handleDeliveryAreaSelect}
+                  className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 text-sm text-gray-800 appearance-none cursor-pointer transition-all"
+                >
+                  <option value="" disabled className="text-gray-500">
+                    {branch ? 'Select your area' : 'Select a branch first'}
+                  </option>
+                  {deliveryAreas.length > 0 ? (
+                    deliveryAreas.map((area) => (
+                      <option 
+                        key={area._id} 
+                        value={area._id} 
+                        className="text-gray-800"
+                      >
+                        {area.name} • Rs. {area.fee}
+                      </option>
+                    ))
+                  ) : branch ? (
+                    <option disabled className="text-gray-500">No delivery areas available</option>
+                  ) : null}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
+              </div>
               {branch && deliveryAreas.length === 0 && (
                 <p className="text-xs text-red-600 mt-2">
-                  No delivery areas available for {branch.name}. Please try pickup or contact support.
+                  No delivery areas available for {branch.name}. Please try pickup.
                 </p>
               )}
             </div>
