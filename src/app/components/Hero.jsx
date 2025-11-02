@@ -130,7 +130,7 @@ function Header() {
           </a>
         </div>
 
-        <div className="absolute left-1/2 transform -translate-x-1/2 sm:top-0 top-[26px] z-10">
+        <div className="absolute left-1/2 transform -translate-x-1/2 sm:top-0 top-[0px] z-10">
           <div className="bg-white rounded-full p-2 sm:w-28 sm:h-28 w-20 h-20 flex items-center justify-center shadow-md">
             <img 
               src={logo}
