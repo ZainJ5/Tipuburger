@@ -122,11 +122,11 @@ function Header() {
           )}
 
           <a 
-            href={`tel:${branch?.phone || '03122754064'}`}
+            href={`tel:${branch?.phone || '021 - 111 822 111'}`}
             className="hidden sm:flex items-center bg-black text-white rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm"
           >
             <Phone className="h-4 w-4 sm:h-5 w-5 mr-1 text-white" />
-            <span className="font-medium text-xs sm:text-sm">{branch?.phone || '03122754064'}</span>
+            <span className="font-medium text-xs sm:text-sm">{branch?.phone || '021 - 111 822 111'}</span>
           </a>
         </div>
 
@@ -153,11 +153,11 @@ function Header() {
           )}
           
           <a 
-            href={`tel:${branch?.phone || '03122754064'}`}
+            href={`tel:${branch?.phone || '021 - 111 822 111'}`}
             className="flex sm:hidden items-center bg-black text-white rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm"
           >
             <Phone className="h-4 w-4 sm:h-5 w-5 mr-1 text-white" />
-            <span className="font-medium text-xs sm:text-sm">{branch?.phone || '03122754064'}</span>
+            <span className="font-medium text-xs sm:text-sm">{branch?.phone || '021 - 111 822 111'}</span>
           </a>
           
           {/* Desktop Header Cart Icon */}
