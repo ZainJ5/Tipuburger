@@ -185,7 +185,11 @@ export default function CheckoutPage() {
     
     async function fetchDeliveryAreas() {
       try {
-        const res = await fetch("/api/delivery-areas");
+        // Fetch areas based on selected branch
+        const url = branch?._id 
+          ? `/api/delivery-areas?branchId=${branch._id}`
+          : "/api/delivery-areas";
+        const res = await fetch(url);
         if (res.ok) {
           const data = await res.json();
           setDeliveryAreas(data.filter(area => area.isActive));
@@ -216,11 +220,11 @@ export default function CheckoutPage() {
     }
     
     fetchDiscountSettings();
-    if (orderType === "delivery") {
+    if (orderType === "delivery" && branch) {
       fetchDeliveryAreas();
     }
     fetchSiteStatus();
-  }, [orderType]);
+  }, [orderType, branch]);
 
   useEffect(() => {
     setAppliedDiscount(totalDiscount);
@@ -797,6 +801,11 @@ const handlePlaceOrder = async () => {
                       <label className="block text-sm text-gray-700 mb-1">
                         Select Area <span className="text-red-500">*Required</span>
                       </label>
+                      {branch && (
+                        <p className="text-xs text-gray-600 mb-2">
+                          Showing areas for <span className="font-semibold">{branch.name}</span> branch
+                        </p>
+                      )}
                       <select
                         value={selectedArea ? selectedArea.name : ""}
                         onChange={(e) => {
@@ -814,6 +823,11 @@ const handlePlaceOrder = async () => {
                           </option>
                         ))}
                       </select>
+                      {deliveryAreas.length === 0 && branch && (
+                        <p className="text-xs text-red-600 mt-1">
+                          No delivery areas available for {branch.name} branch. Please contact support.
+                        </p>
+                      )}
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
