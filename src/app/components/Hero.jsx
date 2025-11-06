@@ -32,18 +32,17 @@ function Header() {
         if (!response.ok) throw new Error('Failed to fetch branches')
         const data = await response.json()
         setBranches(data)
-        
+        // Set default branch or first branch if no branch is selected
         if (!branch && data && data.length > 0) {
-          setBranch(data[0])
+          const defaultBranch = data.find(b => b.isDefault)
+          setBranch(defaultBranch || data[0])
         }
       } catch (err) {
         console.error('Error fetching branches:', err)
       } finally {
         setLoading(false)
       }
-    }
-
-    // Check if orders exist in localStorage
+    }    // Check if orders exist in localStorage
     const checkOrderHistory = () => {
       const orderHistory = localStorage.getItem('orderHistory')
       if (orderHistory && JSON.parse(orderHistory).length > 0) {
