@@ -308,19 +308,20 @@ export default function CheckoutPage() {
       return false;
     }
     
-    if(!alternateMobile.trim()){
+    if (orderType === "delivery") {
+      if(!alternateMobile.trim()){
         toast.error("Please enter your WhatsApp number.", {
-        style: { background: "#dc2626", color: "#ffffff" },
-      });
-      return false;
-    }
-    
-    // Added validation for WhatsApp number format
-    if (!phoneRegex.test(alternateMobile.trim())) {
-      toast.error("Please enter a valid WhatsApp number (format: 03XXXXXXXXX)", {
-        style: { background: "#dc2626", color: "#ffffff" },
-      });
-      return false;
+          style: { background: "#dc2626", color: "#ffffff" },
+        });
+        return false;
+      }
+      
+      if (!phoneRegex.test(alternateMobile.trim())) {
+        toast.error("Please enter a valid WhatsApp number (format: 03XXXXXXXXX)", {
+          style: { background: "#dc2626", color: "#ffffff" },
+        });
+        return false;
+      }
     }
     
     if (!branch) {
