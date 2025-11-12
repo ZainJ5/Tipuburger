@@ -21,46 +21,47 @@ export async function GET(request) {
       data: indexes
     });
 
-    // Check if unique index exists
-    const hasUniqueIndex = indexes.some(idx => 
-      idx.name === 'name_1_branch_1' && idx.unique === true
-    );
-
-    if (hasUniqueIndex) {
-      // Drop the unique compound index
-      try {
-        await collection.dropIndex('name_1_branch_1');
+    // List of problematic unique indexes to drop
+    const indexesToDrop = ['name_1', 'name_1_branch_1'];
+    
+    for (const indexName of indexesToDrop) {
+      const indexExists = indexes.some(idx => idx.name === indexName);
+      
+      if (indexExists) {
+        try {
+          await collection.dropIndex(indexName);
+          result.steps.push({
+            step: `Dropped index: ${indexName}`,
+            status: 'success'
+          });
+        } catch (error) {
+          result.steps.push({
+            step: `Drop index: ${indexName}`,
+            status: 'error',
+            error: error.message
+          });
+        }
+      } else {
         result.steps.push({
-          step: 'Dropped unique index',
-          status: 'success'
-        });
-      } catch (error) {
-        result.steps.push({
-          step: 'Drop unique index',
-          status: 'error',
-          error: error.message
-        });
-      }
-
-      // Create new non-unique index
-      try {
-        await collection.createIndex({ name: 1, branch: 1 });
-        result.steps.push({
-          step: 'Created non-unique index',
-          status: 'success'
-        });
-      } catch (error) {
-        result.steps.push({
-          step: 'Create non-unique index',
-          status: 'error',
-          error: error.message
+          step: `Check index: ${indexName}`,
+          status: 'skipped',
+          message: 'Index does not exist'
         });
       }
-    } else {
+    }
+
+    // Create new non-unique compound index for query optimization
+    try {
+      await collection.createIndex({ name: 1, branch: 1 });
       result.steps.push({
-        step: 'Check unique index',
-        status: 'skipped',
-        message: 'Unique index does not exist or already migrated'
+        step: 'Created non-unique compound index (name + branch)',
+        status: 'success'
+      });
+    } catch (error) {
+      result.steps.push({
+        step: 'Create non-unique compound index',
+        status: 'error',
+        error: error.message
       });
     }
 

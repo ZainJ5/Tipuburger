@@ -20,16 +20,20 @@ async function migrateIndexes() {
     const indexes = await collection.indexes();
     console.log(JSON.stringify(indexes, null, 2));
 
-    // Drop the unique compound index if it exists
-    try {
-      console.log('\nDropping unique index on name and branch...');
-      await collection.dropIndex('name_1_branch_1');
-      console.log('✓ Successfully dropped unique index');
-    } catch (error) {
-      if (error.code === 27) {
-        console.log('Index does not exist, skipping...');
-      } else {
-        throw error;
+    // Drop all unique indexes on name field
+    const indexesToDrop = ['name_1', 'name_1_branch_1'];
+    
+    for (const indexName of indexesToDrop) {
+      try {
+        console.log(`\nDropping index: ${indexName}...`);
+        await collection.dropIndex(indexName);
+        console.log(`✓ Successfully dropped ${indexName}`);
+      } catch (error) {
+        if (error.code === 27) {
+          console.log(`Index ${indexName} does not exist, skipping...`);
+        } else {
+          console.error(`Error dropping ${indexName}:`, error.message);
+        }
       }
     }
 
