@@ -30,8 +30,9 @@ const deliveryAreaSchema = new mongoose.Schema({
   },
 });
 
-// Create a compound unique index for name and branch
-deliveryAreaSchema.index({ name: 1, branch: 1 }, { unique: true });
+// Allow same delivery area name for different branches
+// Only enforce uniqueness within the same branch
+deliveryAreaSchema.index({ name: 1, branch: 1 });
 
 deliveryAreaSchema.pre('save', function (next) {
   this.updatedAt = Date.now();

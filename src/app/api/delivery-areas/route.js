@@ -61,6 +61,19 @@ export async function PUT(request) {
     }
 
     await connectDB();
+    
+    // Check if another area with the same name exists for this branch
+    if (branch) {
+      const existingArea = await DeliveryArea.findOne({ 
+        name, 
+        branch,
+        _id: { $ne: _id } // Exclude current area being updated
+      });
+      if (existingArea) {
+        return NextResponse.json({ error: 'Area with this name already exists for this branch' }, { status: 400 });
+      }
+    }
+    
     const updateData = { name, fee, updatedAt: new Date() };
     
     if (branch) {
