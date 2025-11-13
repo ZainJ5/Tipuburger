@@ -939,19 +939,20 @@ const handlePlaceOrder = async () => {
                     </button>
                     <button
                       type="button"
-                      onClick={() => {
-                        setPaymentMethod("online");
-                        setOnlineOption(null);
-                        setReceiptFile(null);
-                      }}
-                      className={`p-4 border rounded-md flex items-center justify-center space-x-2 ${
+                      // onClick={() => {
+                      //   setPaymentMethod("online");
+                      //   setOnlineOption(null);
+                      //   setReceiptFile(null);
+                      // }}
+                      className={`p-4 border rounded-md flex flex-col items-center justify-center space-y-2 ${
                         paymentMethod === "online"
                           ? "border-blue-500 bg-blue-50"
-                          : "border-gray-200"
+                          : "border-gray-200 opacity-50"
                       }`}
                     >
                       <FaCreditCard className="text-blue-500" size={24} />
                       <span>Online Payment</span>
+                      <span className="text-xs text-gray-500">(Coming Soon)</span>
                     </button>
                   </div>
                 </div>
