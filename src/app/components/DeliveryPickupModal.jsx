@@ -188,7 +188,7 @@ export default function DeliveryPickupModal() {
           <div>
             <label className="block text-base font-semibold text-gray-700 mb-2">
               <MapPin className="inline mr-1.5" size={18} />
-              Branch Location
+              Select Your Nearest Location
             </label>
             <div className="relative">
               <select

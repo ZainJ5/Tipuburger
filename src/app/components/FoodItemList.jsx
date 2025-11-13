@@ -232,20 +232,31 @@ export default function FoodItemList() {
     const { branch, category, subcategory, search } = filters;
 
     if (branch) {
-      filtered = filtered.filter(
-        (item) => extractValue(item.branch?._id || item.branch) === branch
-      );
+      filtered = filtered.filter((item) => {
+        const branchId =
+          typeof item.branch === "object" && item.branch !== null
+            ? extractValue(item.branch._id)
+            : extractValue(item.branch);
+        return branchId === branch;
+      });
     }
     if (category) {
-      filtered = filtered.filter(
-        (item) => extractValue(item.category?._id || item.category) === category
-      );
+      filtered = filtered.filter((item) => {
+        const categoryId =
+          typeof item.category === "object" && item.category !== null
+            ? extractValue(item.category._id)
+            : extractValue(item.category);
+        return categoryId === category;
+      });
     }
     if (subcategory) {
-      filtered = filtered.filter(
-        (item) =>
-          extractValue(item.subcategory?._id || item.subcategory) === subcategory
-      );
+      filtered = filtered.filter((item) => {
+        const subcategoryId =
+          typeof item.subcategory === "object" && item.subcategory !== null
+            ? extractValue(item.subcategory._id)
+            : extractValue(item.subcategory);
+        return subcategoryId === subcategory;
+      });
     }
     if (search) {
       const searchLower = search.toLowerCase();

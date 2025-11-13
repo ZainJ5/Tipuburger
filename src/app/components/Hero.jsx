@@ -276,7 +276,7 @@ export default function Hero() {
       <Header />
 
       <div
-        className="relative w-full aspect-[750/250] sm:aspect-[16/5] overflow-hidden"
+        className="relative w-full aspect-[750/250] sm:aspect-[16/6] overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
