@@ -38,13 +38,19 @@ export default function Home() {
     if (!branch) return;
     
     setLoading(true);
+    
+    // Store the current branch ID to check if it's still valid when data arrives
+    const currentBranchId = getId(branch);
+    
+    // Create an AbortController to cancel the request if branch changes
+    const abortController = new AbortController();
 
     const fetchData = async () => {
       try {
         const [categoriesRes, subcategoriesRes, itemsRes] = await Promise.all([
-          fetch('/api/categories'),
-          fetch('/api/subcategories'),
-          fetch('/api/fooditems')
+          fetch('/api/categories', { signal: abortController.signal }),
+          fetch('/api/subcategories', { signal: abortController.signal }),
+          fetch('/api/fooditems', { signal: abortController.signal })
         ]);
 
         const [categoriesData, subcategoriesData, itemsData] = await Promise.all([
@@ -53,10 +59,16 @@ export default function Home() {
           itemsRes.json()
         ]);
 
+        // Check if branch has changed while data was being fetched
+        if (getId(branch) !== currentBranchId) {
+          console.log('Branch changed during fetch, ignoring stale data');
+          return; // Ignore this data as branch has changed
+        }
+
         const filteredCategories = categoriesData.filter((cat) => {
           if (cat.branch) {
             const catBranch = typeof cat.branch === 'object' ? getId(cat.branch) : cat.branch;
-            return catBranch === getId(branch);
+            return catBranch === currentBranchId;
           }
           return false;
         });
@@ -64,20 +76,34 @@ export default function Home() {
         const filteredSubcategories = subcategoriesData.filter((sub) => {
           if (sub.branch) {
             const subBranch = typeof sub.branch === 'object' ? getId(sub.branch) : sub.branch;
-            return subBranch === getId(branch);
+            return subBranch === currentBranchId;
+          }
+          return false;
+        });
+
+        // Filter items by branch as well
+        const filteredItems = itemsData.filter((item) => {
+          if (item.branch) {
+            const itemBranch = typeof item.branch === 'object' ? getId(item.branch) : item.branch;
+            return itemBranch === currentBranchId;
           }
           return false;
         });
 
         setCategories(filteredCategories);
         setSubcategories(filteredSubcategories);
-        setItems(itemsData);
+        setItems(filteredItems);
         
         if (filteredCategories.length > 0) {
           setVisibleCategory(filteredCategories[0]);
         }
 
       } catch (error) {
+        // Ignore abort errors
+        if (error.name === 'AbortError') {
+          console.log('Fetch aborted due to branch change');
+          return;
+        }
         console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
@@ -86,6 +112,11 @@ export default function Home() {
     };
 
     fetchData();
+    
+    // Cleanup function to abort fetch if component unmounts or branch changes
+    return () => {
+      abortController.abort();
+    };
   }, [branch]);
 
   const filteredItems = items;
