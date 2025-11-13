@@ -10,7 +10,7 @@ import { useDeliveryAreaStore } from "../../store/deliveryAreaStore"; // Import 
 import DeliveryPickupModal from "../components/DeliveryPickupModal";
 import { useRouter } from "next/navigation";
 
-const MIN_ORDER_VALUE = 1;
+const MIN_ORDER_VALUE = 500;
 
 export default function CheckoutPage() {
   const router = useRouter();
