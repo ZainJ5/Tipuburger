@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Eye, Printer, CheckCircle, XCircle, Trash2, Save, MessageCircle } from "lucide-react";
+import { Eye, Printer, CheckCircle, XCircle, Trash2, Save, MessageCircle, Copy, Check } from "lucide-react";
 
 const OrderDetailsSkeleton = () => (
   <div className="animate-pulse space-y-4">
@@ -45,6 +45,7 @@ export default function OrderDetailsModal({
   extractAreaFromAddress,
 }) {
   const [area, setArea] = useState("");
+  const [copiedField, setCopiedField] = useState("");
 
   useEffect(() => {
     if (selectedOrder) {
@@ -56,6 +57,16 @@ export default function OrderDetailsModal({
   }, [selectedOrder, extractAreaFromAddress]);
 
   if (!selectedOrder) return null;
+
+  const copyToClipboard = async (text, fieldName) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedField(fieldName);
+      setTimeout(() => setCopiedField(""), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
 
   const formatPhoneForWhatsApp = (phoneNumber) => {
     const cleanNumber = phoneNumber.replace(/\D/g, '');
@@ -102,6 +113,20 @@ export default function OrderDetailsModal({
     );
   };
 
+  const CopyButton = ({ text, fieldName }) => (
+    <button
+      onClick={() => copyToClipboard(text, fieldName)}
+      className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
+      title={`Copy ${fieldName}`}
+    >
+      {copiedField === fieldName ? (
+        <Check className="h-4 w-4 text-green-600" />
+      ) : (
+        <Copy className="h-4 w-4" />
+      )}
+    </button>
+  );
+
   return (
     <>
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -125,21 +150,25 @@ export default function OrderDetailsModal({
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-gray-50 rounded-lg p-3 border border-gray-200 md:col-span-2">
-                  <h4 className="text-md font-semibold mb-2 text-gray-700 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    Customer Information
-                  </h4>
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="text-md font-semibold text-gray-700 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      Customer Information
+                    </h4>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-1 gap-2">
                     <div className="flex items-center gap-2">
                       <p className="text-sm text-gray-600 whitespace-nowrap">Full Name:</p>
                       <p className="font-medium">{selectedOrder.fullName}</p>
+                      <CopyButton text={selectedOrder.fullName} fieldName="fullName" />
                     </div>
                     <div className="flex items-center gap-2">
                       <p className="text-sm text-gray-600 whitespace-nowrap">Mobile Number:</p>
                       <div className="flex items-center">
                         <p className="font-medium">{selectedOrder.mobileNumber}</p>
+                        <CopyButton text={selectedOrder.mobileNumber} fieldName="mobileNumber" />
                         <button 
                           onClick={() => openWhatsAppChat(selectedOrder.mobileNumber)}
                           className="ml-2 text-green-600 hover:text-green-700"
@@ -156,6 +185,7 @@ export default function OrderDetailsModal({
                         <p className="text-sm text-gray-600 whitespace-nowrap">Whatsapp:</p>
                         <div className="flex items-center">
                           <p className="font-medium">{selectedOrder.alternateMobile}</p>
+                          <CopyButton text={selectedOrder.alternateMobile} fieldName="alternateMobile" />
                           <button 
                             onClick={() => openWhatsAppChat(selectedOrder.alternateMobile)}
                             className="ml-2 text-green-600 hover:text-green-700"
@@ -172,6 +202,7 @@ export default function OrderDetailsModal({
                       <div className="flex items-center gap-2">
                         <p className="text-sm text-gray-600 whitespace-nowrap">Email:</p>
                         <p className="font-medium">{selectedOrder.email}</p>
+                        <CopyButton text={selectedOrder.email} fieldName="email" />
                       </div>
                     )}
                     {selectedOrder.orderType === "delivery" && selectedOrder.deliveryAddress && (
@@ -179,6 +210,7 @@ export default function OrderDetailsModal({
                         <div className="flex flex-wrap items-baseline gap-2">
                           <p className="text-sm text-gray-600 whitespace-nowrap">Delivery Address:</p>
                           <p className="font-medium">{selectedOrder.deliveryAddress}</p>
+                          <CopyButton text={selectedOrder.deliveryAddress} fieldName="deliveryAddress" />
                         </div>
                         {area && (
                           <div className="flex flex-wrap items-center gap-2">
@@ -187,6 +219,7 @@ export default function OrderDetailsModal({
                               <span className="inline-block px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-full font-medium">
                                 {area}
                               </span>
+                              <CopyButton text={area} fieldName="area" />
                               <span className="text-sm text-gray-600">
                                 (Delivery Fee: Rs. {deliveryFee})
                               </span>
@@ -197,6 +230,7 @@ export default function OrderDetailsModal({
                           <div className="flex flex-wrap items-baseline gap-2">
                             <p className="text-sm text-gray-600 whitespace-nowrap">Nearest Landmark:</p>
                             <p className="font-medium">{selectedOrder.nearestLandmark}</p>
+                            <CopyButton text={selectedOrder.nearestLandmark} fieldName="nearestLandmark" />
                           </div>
                         )}
                       </>
@@ -205,6 +239,7 @@ export default function OrderDetailsModal({
                       <div className="flex items-center gap-2">
                         <p className="text-sm text-gray-600 whitespace-nowrap">Pickup Time:</p>
                         <p className="font-medium">{selectedOrder.pickupTime}</p>
+                        <CopyButton text={selectedOrder.pickupTime} fieldName="pickupTime" />
                       </div>
                     )}
                   </div>
@@ -449,12 +484,14 @@ export default function OrderDetailsModal({
                       <p className="text-sm bg-yellow-50 p-2 rounded border border-yellow-100">
                         {selectedOrder.paymentInstructions}
                       </p>
+                      <CopyButton text={selectedOrder.paymentInstructions} fieldName="paymentInstructions" />
                     </div>
                   )}
                   {selectedOrder.changeRequest && (
                     <div className="flex items-center gap-2">
                       <p className="text-sm text-gray-600 font-medium whitespace-nowrap">Change Request:</p>
                       <p className="text-sm">Rs. {selectedOrder.changeRequest}</p>
+                      <CopyButton text={`Rs. ${selectedOrder.changeRequest}`} fieldName="changeRequest" />
                     </div>
                   )}
                   {selectedOrder.isGift && selectedOrder.giftMessage && (
@@ -463,6 +500,7 @@ export default function OrderDetailsModal({
                       <p className="text-sm bg-pink-50 p-2 rounded border border-pink-100">
                         {selectedOrder.giftMessage}
                       </p>
+                      <CopyButton text={selectedOrder.giftMessage} fieldName="giftMessage" />
                     </div>
                   )}
 
