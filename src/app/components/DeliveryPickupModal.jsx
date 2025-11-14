@@ -35,10 +35,11 @@ export default function DeliveryPickupModal() {
         if (branchesRes.ok) {
           const branchData = await branchesRes.json();
           setBranches(branchData);
-          // Set default branch or first branch if no branch is selected
           if (!branch && branchData && branchData.length > 0) {
             const defaultBranch = branchData.find(b => b.isDefault);
-            setBranch(defaultBranch || branchData[0]);
+            if (defaultBranch) {
+              setBranch(defaultBranch);
+            }
           }
         }
       } catch (error) {

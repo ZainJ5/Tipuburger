@@ -39,10 +39,8 @@ export default function Home() {
     
     setLoading(true);
     
-    // Store the current branch ID to check if it's still valid when data arrives
     const currentBranchId = getId(branch);
     
-    // Create an AbortController to cancel the request if branch changes
     const abortController = new AbortController();
 
     const fetchData = async () => {
@@ -59,10 +57,9 @@ export default function Home() {
           itemsRes.json()
         ]);
 
-        // Check if branch has changed while data was being fetched
         if (getId(branch) !== currentBranchId) {
           console.log('Branch changed during fetch, ignoring stale data');
-          return; // Ignore this data as branch has changed
+          return; 
         }
 
         const filteredCategories = categoriesData.filter((cat) => {
@@ -81,7 +78,6 @@ export default function Home() {
           return false;
         });
 
-        // Filter items by branch as well
         const filteredItems = itemsData.filter((item) => {
           if (item.branch) {
             const itemBranch = typeof item.branch === 'object' ? getId(item.branch) : item.branch;
@@ -99,7 +95,6 @@ export default function Home() {
         }
 
       } catch (error) {
-        // Ignore abort errors
         if (error.name === 'AbortError') {
           console.log('Fetch aborted due to branch change');
           return;
@@ -113,7 +108,6 @@ export default function Home() {
 
     fetchData();
     
-    // Cleanup function to abort fetch if component unmounts or branch changes
     return () => {
       abortController.abort();
     };
@@ -214,7 +208,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* WhatsApp Button */}
         <div className="fixed bottom-24 sm:bottom-6 right-6 z-[101]">
           <button
             onClick={handleWhatsAppClick}
@@ -229,7 +222,6 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Cart Button */}
         <CartButton />
 
         <div className="mt-10">
