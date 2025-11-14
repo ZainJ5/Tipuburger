@@ -35,7 +35,7 @@ function Header() {
         // Set default branch or first branch if no branch is selected
         if (!branch && data && data.length > 0) {
           const defaultBranch = data.find(b => b.isDefault)
-          setBranch(defaultBranch || data[0])
+          setBranch(defaultBranch || null)
         }
       } catch (err) {
         console.error('Error fetching branches:', err)

@@ -35,11 +35,10 @@ export default function DeliveryPickupModal() {
         if (branchesRes.ok) {
           const branchData = await branchesRes.json();
           setBranches(branchData);
+          // Set default branch or first branch if no branch is selected
           if (!branch && branchData && branchData.length > 0) {
             const defaultBranch = branchData.find(b => b.isDefault);
-            if (defaultBranch) {
-              setBranch(defaultBranch);
-            }
+            setBranch(defaultBranch || null);
           }
         }
       } catch (error) {
@@ -108,7 +107,7 @@ export default function DeliveryPickupModal() {
     const selectedBranchId = e.target.value;
     const selectedBranch = branches.find(b => b._id === selectedBranchId);
     setBranch(selectedBranch || null);
-    setDeliveryArea(null); // Reset delivery area when branch changes
+    setDeliveryArea(null); 
   };
  
   const handleDeliveryAreaSelect = (e) => {
