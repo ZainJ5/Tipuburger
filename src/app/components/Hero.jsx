@@ -71,6 +71,9 @@ function Header() {
   const handleBranchChange = (selectedBranch) => {
     setBranch(selectedBranch) 
     setDropdownOpen(false)
+    
+    // Scroll to top when branch changes to show the menu from the beginning
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (

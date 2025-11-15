@@ -106,8 +106,13 @@ export default function DeliveryPickupModal() {
   const handleBranchSelect = (e) => {
     const selectedBranchId = e.target.value;
     const selectedBranch = branches.find(b => b._id === selectedBranchId);
+    
+    // Clear order type and delivery area when changing branch
+    setOrderType(null);
+    setDeliveryArea(null);
+    
+    // Update branch (this will trigger version increment in the store)
     setBranch(selectedBranch || null);
-    setDeliveryArea(null); 
   };
  
   const handleDeliveryAreaSelect = (e) => {
