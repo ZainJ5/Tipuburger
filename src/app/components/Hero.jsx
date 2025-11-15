@@ -3,12 +3,14 @@ import Image from 'next/image'
 import { MapPin, Phone, ChevronDown, ClipboardList } from 'lucide-react'
 import HeaderCartIcon from './HeaderCartIcon' 
 import { useBranchStore } from '../../store/branchStore' 
+import { useCartStore } from '../../store/cart'
 import Link from 'next/link'
 
 function Header() {
   const [logo, setLogo] = useState('/logo/logo-1753880016916.png')
   const [branches, setBranches] = useState([])
   const { branch, setBranch } = useBranchStore()
+  const { clearCart } = useCartStore()
   const [loading, setLoading] = useState(true)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef(null)
@@ -69,10 +71,10 @@ function Header() {
   }, [])
 
   const handleBranchChange = (selectedBranch) => {
+    clearCart()
     setBranch(selectedBranch) 
     setDropdownOpen(false)
     
-    // Scroll to top when branch changes to show the menu from the beginning
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 

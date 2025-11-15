@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useOrderTypeStore } from "../../store/orderTypeStore";
 import { useDeliveryAreaStore } from "../../store/deliveryAreaStore";
 import { useBranchStore } from "../../store/branchStore";
+import { useCartStore } from "../../store/cart";
 import { Truck, ShoppingBag, MapPin, ChevronDown } from "lucide-react";
 export default function DeliveryPickupModal() {
   const [isSiteActive, setIsSiteActive] = useState(true);
@@ -14,6 +15,7 @@ export default function DeliveryPickupModal() {
   const { orderType, setOrderType } = useOrderTypeStore();
   const { deliveryArea, setDeliveryArea } = useDeliveryAreaStore();
   const { branch, setBranch } = useBranchStore();
+  const { clearCart } = useCartStore();
   const [branches, setBranches] = useState([]);
   const [deliveryAreas, setDeliveryAreas] = useState([]);
   const [open, setOpen] = useState(true);
@@ -107,11 +109,11 @@ export default function DeliveryPickupModal() {
     const selectedBranchId = e.target.value;
     const selectedBranch = branches.find(b => b._id === selectedBranchId);
     
-    // Clear order type and delivery area when changing branch
+    clearCart();
+    
     setOrderType(null);
     setDeliveryArea(null);
     
-    // Update branch (this will trigger version increment in the store)
     setBranch(selectedBranch || null);
   };
  
